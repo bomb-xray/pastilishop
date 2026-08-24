@@ -621,6 +621,47 @@ function setupRevealAnimation() {
   revealItems.forEach((item) => observer.observe(item));
 }
 
+function supports3DTilt() {
+  return window.matchMedia?.("(pointer: fine)").matches ?? false;
+}
+
+function resetCardTilt(card) {
+  card.classList.remove("tilt-active");
+  card.style.setProperty("--tilt-x", "0deg");
+  card.style.setProperty("--tilt-y", "0deg");
+  card.style.setProperty("--shine-x", "50%");
+  card.style.setProperty("--shine-y", "0%");
+}
+
+function updateCardTilt(event) {
+  if (!supports3DTilt()) return;
+
+  const card = event.target.closest(".product-card");
+  if (!card || !els.productGrid.contains(card)) return;
+
+  const rect = card.getBoundingClientRect();
+  const x = (event.clientX - rect.left) / rect.width;
+  const y = (event.clientY - rect.top) / rect.height;
+  const tiltX = (0.5 - y) * 11;
+  const tiltY = (x - 0.5) * 13;
+
+  card.classList.add("tilt-active");
+  card.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+  card.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+  card.style.setProperty("--shine-x", `${(x * 100).toFixed(1)}%`);
+  card.style.setProperty("--shine-y", `${(y * 100).toFixed(1)}%`);
+}
+
+function resetCardTiltOnLeave(event) {
+  const card = event.target.closest(".product-card");
+  if (!card) return;
+
+  const nextTarget = event.relatedTarget;
+  if (nextTarget && card.contains(nextTarget)) return;
+
+  resetCardTilt(card);
+}
+
 function bindEvents() {
   els.filterChips.addEventListener("click", (event) => {
     const button = event.target.closest("[data-filter]");
@@ -642,6 +683,9 @@ function bindEvents() {
     if (addButton) addToCart(addButton.dataset.add);
     if (deleteButton) deleteProduct(deleteButton.dataset.delete);
   });
+
+  els.productGrid.addEventListener("mousemove", updateCardTilt);
+  els.productGrid.addEventListener("mouseout", resetCardTiltOnLeave);
 
   els.cartItems.addEventListener("click", (event) => {
     const plus = event.target.closest("[data-qty-plus]");
