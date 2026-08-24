@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d0637" />
+    <title>پاستیلی‌شاپ | فروشگاه پاستیل و تنقلات خاص</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="aurora aurora-one"></div>
+    <div class="aurora aurora-two"></div>
+
+    <header class="site-header" id="top">
+      <a class="brand" href="#top" aria-label="بازگشت به ابتدای سایت">
+        <span class="brand-mark">🍬</span>
+        <span>
+          <strong>پاستیلی‌شاپ</strong>
+          <small>شیرینی که از صفحه می‌درخشد</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="ناوبری اصلی">
+        <a href="#products">محصولات</a>
+        <a href="#giftbox">گیفت‌باکس</a>
+        <a href="#why-us">چرا ما؟</a>
+        <a href="#adminPanel" class="admin-nav admin-only">پنل ادمین</a>
+      </nav>
+
+      <div class="auth-corner" aria-label="ورود کاربر">
+        <button class="login-trigger" id="loginTrigger" type="button">
+          <span class="login-icon">👤</span>
+          <span id="loginTriggerText">ورود ادمین</span>
+        </button>
+        <button class="cart-trigger" id="cartTrigger" type="button" aria-label="سبد خرید">
+          🛒
+          <span id="cartCount">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero section-shell">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">Fresh Drop 2026</span>
+          <h1>فروشگاه پاستیلی که مثل یک آبنبات نئونی، چشم را می‌گیرد.</h1>
+          <p>
+            پاستیل‌های میوه‌ای، ترش، لاکچری و گیفت‌باکس‌های سفارشی با طراحی مدرن،
+            ارسال سریع و تجربه خریدی که حس یک بازی خوشمزه را دارد.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-btn" href="#products">شروع خرید جذاب</a>
+            <button class="secondary-btn" id="surpriseBtn" type="button">پیشنهاد شانسی 🎲</button>
+          </div>
+          <div class="trust-row" aria-label="ویژگی‌های اعتماد">
+            <span>ارسال امروز</span>
+            <span>بسته‌بندی ضدضربه</span>
+            <span>تضمین تازگی</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" aria-label="پیشنهاد ویژه">
+          <div class="floating-candy candy-a">🍭</div>
+          <div class="floating-candy candy-b">🍓</div>
+          <div class="floating-candy candy-c">🫐</div>
+          <div class="hero-card-inner">
+            <span class="badge-live">پرفروش هفته</span>
+            <div class="product-spotlight">🌈</div>
+            <h2>میکس رنگین‌کمانی ۱ کیلویی</h2>
+            <p>ترکیب ۱۲ طعم خاص با کارت پیام رایگان و پاکت متالیک.</p>
+            <div class="price-line">
+              <strong>۳۴۹٬۰۰۰ تومان</strong>
+              <span>٪۱۸ تخفیف</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mini-dashboard section-shell" aria-label="آمار فروشگاه">
+        <article>
+          <strong>+۸۵۰</strong>
+          <span>سفارش خوشمزه</span>
+        </article>
+        <article>
+          <strong>۴.۹/۵</strong>
+          <span>رضایت مشتری‌ها</span>
+        </article>
+        <article>
+          <strong>۲۴ ساعته</strong>
+          <span>پشتیبانی سفارش</span>
+        </article>
+        <article class="admin-only admin-stat">
+          <strong id="adminLiveProducts">۰</strong>
+          <span>محصول فعال در پنل</span>
+        </article>
+      </section>
+
+      <section class="section-shell product-section" id="products">
+        <div class="section-heading reveal">
+          <span class="eyebrow">قفسه هوشمند</span>
+          <h2>محصولات منتخب</h2>
+          <p>با فیلتر طعم، جستجوی سریع و کارت‌هایی که در حالت ادمین قابل مدیریت می‌شوند.</p>
+        </div>
+
+        <div class="shop-toolbar reveal">
+          <label class="search-box" for="searchInput">
+            🔎
+            <input id="searchInput" type="search" placeholder="جستجو بین پاستیل‌ها..." autocomplete="off" />
+          </label>
+          <div class="filter-chips" id="filterChips" aria-label="فیلتر محصولات"></div>
+        </div>
+
+        <div class="product-grid" id="productGrid" aria-live="polite"></div>
+      </section>
+
+      <section class="section-shell giftbox" id="giftbox">
+        <div class="giftbox-card reveal">
+          <div>
+            <span class="eyebrow">Gift Studio</span>
+            <h2>گیفت‌باکس اختصاصی بساز؛ از رنگ تا پیام روی کارت.</h2>
+            <p>
+              برای تولد، سورپرایز، ولنتاین یا حتی یک آشتی شیرین. رنگ‌بندی، طعم غالب،
+              پیام کارت و بودجه را انتخاب کن تا یک باکس آماده هدیه داشته باشی.
+            </p>
+            <button class="primary-btn" id="giftIdeaBtn" type="button">ایده گیفت‌باکس بده</button>
+          </div>
+          <div class="gift-preview" id="giftPreview">
+            <span>🎁</span>
+            <strong>باکس بنفش ترش</strong>
+            <small>پیشنهاد امروز برای دوست‌های هیجان‌طلب</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-shell why-us" id="why-us">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Sweet Strategy</span>
+          <h2>چرا این شاپ حرفه‌ای حس می‌دهد؟</h2>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <span>⚡</span>
+            <h3>خرید سریع</h3>
+            <p>سبد خرید کشویی، ثبت سفارش آزمایشی و ذخیره‌سازی محلی برای تجربه روان.</p>
+          </article>
+          <article class="feature-card reveal">
+            <span>🧠</span>
+            <h3>ادمین خلاق</h3>
+            <p>با ورود مخصوص، پنل مدیریت، افزودن محصول، حذف محصول و مشاهده سفارش‌ها فعال می‌شود.</p>
+          </article>
+          <article class="feature-card reveal">
+            <span>💎</span>
+            <h3>طراحی برندمحور</h3>
+            <p>گلس‌مورفیسم، گرادیان زنده، انیمیشن‌های نرم و رابط فارسی راست‌به‌چپ.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-shell admin-panel admin-only" id="adminPanel" aria-label="پنل مدیریت">
+        <div class="admin-panel-head">
+          <div>
+            <span class="eyebrow">Admin Mode</span>
+            <h2>پنل مدیریت پاستیلی‌شاپ</h2>
+            <p>اینجا فقط بعد از ورود با حساب ادمین دیده می‌شود.</p>
+          </div>
+          <button class="secondary-btn danger" id="logoutBtn" type="button">خروج از حالت ادمین</button>
+        </div>
+
+        <div class="admin-grid">
+          <article class="admin-card">
+            <h3>افزودن محصول جدید</h3>
+            <form id="productForm" class="admin-form">
+              <label>
+                نام محصول
+                <input name="name" required placeholder="مثلاً پاستیل کهکشانی" />
+              </label>
+              <label>
+                دسته / طعم
+                <select name="flavor" required>
+                  <option value="میوه‌ای">میوه‌ای</option>
+                  <option value="ترش">ترش</option>
+                  <option value="لوکس">لوکس</option>
+                  <option value="گیفت">گیفت</option>
+                </select>
+              </label>
+              <label>
+                قیمت به تومان
+                <input name="price" type="number" min="1000" step="1000" required placeholder="250000" />
+              </label>
+              <label>
+                موجودی
+                <input name="stock" type="number" min="0" required placeholder="20" />
+              </label>
+              <label>
+                توضیح کوتاه
+                <textarea name="desc" rows="3" required placeholder="یک توضیح خوشمزه برای کارت محصول..."></textarea>
+              </label>
+              <button class="primary-btn" type="submit">اضافه کن ✨</button>
+            </form>
+          </article>
+
+          <article class="admin-card">
+            <h3>مرکز فرماندهی</h3>
+            <div class="admin-metrics">
+              <div><strong id="metricProducts">۰</strong><span>محصول</span></div>
+              <div><strong id="metricStock">۰</strong><span>موجودی کل</span></div>
+              <div><strong id="metricOrders">۰</strong><span>سفارش</span></div>
+              <div><strong id="metricRevenue">۰</strong><span>فروش آزمایشی</span></div>
+            </div>
+            <h4>سفارش‌های ثبت‌شده</h4>
+            <div class="orders-list" id="ordersList"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+      <div class="cart-header">
+        <div>
+          <span class="eyebrow">Cart</span>
+          <h2>سبد خرید</h2>
+        </div>
+        <button class="icon-btn" id="closeCart" type="button" aria-label="بستن سبد خرید">×</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>مجموع</span>
+          <strong id="cartTotal">۰ تومان</strong>
+        </div>
+        <button class="primary-btn full" id="checkoutBtn" type="button">ثبت سفارش نمایشی</button>
+      </div>
+    </aside>
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <div class="modal" id="loginModal" aria-hidden="true" role="dialog" aria-labelledby="loginTitle">
+      <div class="modal-backdrop" data-close-modal></div>
+      <form class="login-card" id="loginForm">
+        <button class="icon-btn modal-close" type="button" data-close-modal aria-label="بستن فرم ورود">×</button>
+        <span class="eyebrow">Secure Corner</span>
+        <h2 id="loginTitle">ورود به حالت ادمین</h2>
+        <p>فرم ورود دقیقاً در گوشه بالا سمت چپ فعال می‌شود. با حساب ادمین، امکانات مدیریت باز می‌شوند.</p>
+        <label>
+          نام کاربری
+          <input id="username" name="username" inputmode="numeric" autocomplete="username" placeholder="شماره موبایل" required />
+        </label>
+        <label>
+          رمز عبور
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="رمز عبور" required />
+        </label>
+        <p class="form-message" id="loginMessage" role="status"></p>
+        <button class="primary-btn full" type="submit">ورود ادمین</button>
+      </form>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
