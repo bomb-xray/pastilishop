@@ -2,10 +2,10 @@ const ADMIN_USERNAME = "09945827021";
 const ADMIN_PASSWORD = "amir1389";
 
 const STORAGE_KEYS = {
-  products: "pastiliShop.products.v2",
-  cart: "pastiliShop.cart.v2",
-  orders: "pastiliShop.orders.v2",
-  admin: "pastiliShop.admin.v1",
+  products: "tahririno.products.v1",
+  cart: "tahririno.cart.v1",
+  orders: "tahririno.orders.v1",
+  admin: "tahririno.admin.v1",
 };
 
 const gradients = [
@@ -17,16 +17,16 @@ const gradients = [
   "linear-gradient(135deg, #a7f3d0, #60a5fa)",
 ];
 
-const emojis = ["🍬", "🍭", "🧸", "🌈", "🍓", "🍋", "🫐", "🍉", "✨", "🎁"];
+const emojis = ["✏️", "🖊️", "📒", "📚", "📐", "🖌️", "🎨", "🗂️", "✨", "🎁"];
 
 const defaultProducts = [];
 
 
 const giftIdeas = [
-  { emoji: "🎁", title: "باکس بنفش ترش", text: "پیشنهاد امروز برای دوست‌های هیجان‌طلب" },
-  { emoji: "🍓", title: "باکس رزگلد توت‌فرنگی", text: "برای تولدهای لطیف و عکس‌های اینستاگرامی" },
-  { emoji: "🌈", title: "باکس رنگین‌کمان کودکانه", text: "پر از خرسی، کرمی و آبنبات‌های نرم" },
-  { emoji: "💎", title: "باکس لاکچری وارداتی", text: "برای هدیه رسمی با طعم‌های خاص اروپایی" },
+  { emoji: "🖊️", title: "ست کلاسیک مشکی", text: "خودکار ژله‌ای، دفتر ساده و جامدادی مینیمال برای دفتر کار" },
+  { emoji: "🎨", title: "ست هنری رنگی", text: "مدادرنگی، مارکر و دفتر اسکچ برای آدم‌های خلاق" },
+  { emoji: "📚", title: "ست دانشجویی هوشمند", text: "دفتر کلاسوری، هایلایتر و برگه چسبان برای جزوه‌های مرتب" },
+  { emoji: "🎁", title: "ست هدیه پریمیوم", text: "روان‌نویس شیک، دفتر چرمی و کارت پیام اختصاصی" },
 ];
 
 let products = loadFromStorage(STORAGE_KEYS.products, defaultProducts);
@@ -61,6 +61,7 @@ const els = {
   giftIdeaBtn: document.getElementById("giftIdeaBtn"),
   giftPreview: document.getElementById("giftPreview"),
   productForm: document.getElementById("productForm"),
+  productImagePreview: document.getElementById("productImagePreview"),
   metricProducts: document.getElementById("metricProducts"),
   metricStock: document.getElementById("metricStock"),
   metricOrders: document.getElementById("metricOrders"),
@@ -98,6 +99,94 @@ function safe(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function renderProductMedia(product, options = {}) {
+  const { lazy = true } = options;
+
+  if (product.image) {
+    return `<img src="${safe(product.image)}" alt="${safe(product.name)}" ${lazy ? 'loading="lazy"' : ""} />`;
+  }
+
+  return safe(product.emoji || "✏️");
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("عکس محصول خوانده نشد."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImage(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("فرمت عکس محصول معتبر نیست."));
+    image.src = dataUrl;
+  });
+}
+
+async function compressImageFile(file) {
+  if (!file || !file.size) {
+    throw new Error("لطفاً عکس محصول را انتخاب کن.");
+  }
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("فرمت عکس باید JPG، PNG یا WEBP باشد.");
+  }
+
+  if (file.size > 8 * 1024 * 1024) {
+    throw new Error("حجم عکس خیلی زیاد است؛ لطفاً عکس کمتر از ۸ مگابایت انتخاب کن.");
+  }
+
+  const originalDataUrl = await readFileAsDataURL(file);
+  const image = await loadImage(originalDataUrl);
+  const maxSide = 720;
+  const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(image.width * scale));
+  canvas.height = Math.max(1, Math.round(image.height * scale));
+
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/jpeg", 0.78);
+}
+
+function resetProductImagePreview() {
+  if (!els.productImagePreview) return;
+
+  els.productImagePreview.innerHTML = `
+    <span>🖼️</span>
+    <small>هنوز عکسی انتخاب نشده</small>
+  `;
+}
+
+function previewProductImage(file) {
+  if (!els.productImagePreview) return;
+
+  if (!file) {
+    resetProductImagePreview();
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    resetProductImagePreview();
+    showToast("لطفاً فقط فایل عکس انتخاب کن.");
+    return;
+  }
+
+  const previewUrl = URL.createObjectURL(file);
+  els.productImagePreview.innerHTML = `
+    <img src="${safe(previewUrl)}" alt="پیش‌نمایش عکس محصول" />
+    <small>${safe(file.name)}</small>
+  `;
 }
 
 function persistProducts() {
@@ -152,7 +241,7 @@ function renderProducts() {
     els.productGrid.innerHTML = `
       <div class="empty-state">
         <strong>هیچ محصولی پیدا نشد.</strong>
-        <p>فیلتر یا متن جستجو را تغییر بده تا قفسه دوباره شیرین شود.</p>
+        <p>فیلتر یا متن جستجو را تغییر بده تا قفسه دوباره پر شود.</p>
       </div>
     `;
     return;
@@ -163,7 +252,7 @@ function renderProducts() {
       (product) => `
         <article class="product-card reveal visible" style="--product-gradient: ${safe(product.gradient)}; --glow: ${safe(product.glow || "#ff4ecd")}">
           <span class="product-badge">${safe(product.badge || "خاص")}</span>
-          <div class="product-visual" aria-hidden="true">${safe(product.emoji || "🍬")}</div>
+          <div class="product-visual">${renderProductMedia(product)}</div>
           <div class="product-meta">
             <div class="product-topline">
               <span class="tag">${safe(product.flavor)}</span>
@@ -210,7 +299,7 @@ function updateCart() {
     els.cartItems.innerHTML = `
       <div class="empty-state">
         <strong>سبد خرید خالی است.</strong>
-        <p>یک پاستیل خوش‌رنگ انتخاب کن تا اینجا پر از شیرینی شود.</p>
+        <p>یک محصول لوازم تحریر انتخاب کن تا سبد خریدت آماده شود.</p>
       </div>
     `;
     els.checkoutBtn.disabled = true;
@@ -224,7 +313,7 @@ function updateCart() {
     .map(
       ({ product, qty, lineTotal }) => `
         <article class="cart-item">
-          <span class="cart-item-emoji">${safe(product.emoji || "🍬")}</span>
+          <span class="cart-item-emoji">${renderProductMedia(product, { lazy: false })}</span>
           <div>
             <h4>${safe(product.name)}</h4>
             <p>${formatMoney(lineTotal)}</p>
@@ -402,12 +491,13 @@ function checkout() {
   showToast("سفارش نمایشی ثبت شد. در پنل ادمین قابل مشاهده است.");
 }
 
-function addProductFromForm(form) {
+async function addProductFromForm(form) {
   const formData = new FormData(form);
   const name = formData.get("name").toString().trim();
   const flavor = formData.get("flavor").toString();
   const price = Number(formData.get("price"));
   const stock = Number(formData.get("stock"));
+  const imageFile = formData.get("image");
   const desc = formData.get("desc").toString().trim();
 
   if (!name || !flavor || !price || Number.isNaN(stock) || !desc) {
@@ -415,26 +505,54 @@ function addProductFromForm(form) {
     return;
   }
 
-  const randomIndex = Math.floor(Math.random() * gradients.length);
-  products.unshift({
-    id: `p-${Date.now()}`,
-    name,
-    flavor,
-    price,
-    oldPrice: Math.round(price * 1.16),
-    stock,
-    rating: 4.8,
-    badge: "ادمین‌ساز",
-    emoji: emojis[Math.floor(Math.random() * emojis.length)],
-    gradient: gradients[randomIndex],
-    glow: ["#ff4ecd", "#31f5c7", "#ffd166", "#60a5fa"][randomIndex % 4],
-    desc,
-  });
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "در حال ذخیره عکس...";
+  }
 
-  persistProducts();
-  form.reset();
-  renderAll();
-  showToast("محصول جدید با استایل اختصاصی به شاپ اضافه شد.");
+  try {
+    const image = await compressImageFile(imageFile);
+    const randomIndex = Math.floor(Math.random() * gradients.length);
+
+    const newProduct = {
+      id: `p-${Date.now()}`,
+      name,
+      flavor,
+      price,
+      oldPrice: Math.round(price * 1.16),
+      stock,
+      rating: 4.8,
+      badge: "ادمین‌ساز",
+      emoji: emojis[Math.floor(Math.random() * emojis.length)],
+      image,
+      gradient: gradients[randomIndex],
+      glow: ["#ff4ecd", "#31f5c7", "#ffd166", "#60a5fa"][randomIndex % 4],
+      desc,
+    };
+
+    products.unshift(newProduct);
+
+    try {
+      persistProducts();
+    } catch (error) {
+      products = products.filter((product) => product.id !== newProduct.id);
+      showToast("حجم عکس برای ذخیره زیاد است؛ لطفاً عکس کوچک‌تری انتخاب کن.");
+      return;
+    }
+
+    form.reset();
+    resetProductImagePreview();
+    renderAll();
+    showToast("محصول جدید همراه عکس به فروشگاه لوازم تحریر اضافه شد.");
+  } catch (error) {
+    showToast(error.message || "عکس محصول ذخیره نشد.");
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "اضافه کن ✨";
+    }
+  }
 }
 
 function surpriseMe() {
@@ -562,7 +680,7 @@ function bindEvents() {
         closeLoginModal();
         document.getElementById("adminPanel")?.scrollIntoView({ behavior: "smooth" });
       }, 520);
-      showToast("به پنل ادمین پاستیلی‌شاپ خوش آمدی.");
+      showToast("به پنل ادمین تحریرینو خوش آمدی.");
     } else {
       els.loginMessage.textContent = "نام کاربری یا رمز عبور اشتباه است.";
       els.loginMessage.classList.remove("success");
@@ -578,9 +696,13 @@ function bindEvents() {
     showToast("از حالت ادمین خارج شدی.");
   });
 
-  els.productForm.addEventListener("submit", (event) => {
+  els.productForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    addProductFromForm(els.productForm);
+    await addProductFromForm(els.productForm);
+  });
+
+  els.productForm.querySelector('input[name="image"]').addEventListener("change", (event) => {
+    previewProductImage(event.target.files?.[0]);
   });
 
   document.addEventListener("keydown", (event) => {
