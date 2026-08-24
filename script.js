@@ -2,9 +2,9 @@ const ADMIN_USERNAME = "09945827021";
 const ADMIN_PASSWORD = "amir1389";
 
 const STORAGE_KEYS = {
-  products: "pastiliShop.products.v1",
-  cart: "pastiliShop.cart.v1",
-  orders: "pastiliShop.orders.v1",
+  products: "pastiliShop.products.v2",
+  cart: "pastiliShop.cart.v2",
+  orders: "pastiliShop.orders.v2",
   admin: "pastiliShop.admin.v1",
 };
 
@@ -19,92 +19,8 @@ const gradients = [
 
 const emojis = ["🍬", "🍭", "🧸", "🌈", "🍓", "🍋", "🫐", "🍉", "✨", "🎁"];
 
-const defaultProducts = [
-  {
-    id: "p-rainbow-mix",
-    name: "میکس رنگین‌کمانی ۱ کیلویی",
-    flavor: "میوه‌ای",
-    price: 349000,
-    oldPrice: 425000,
-    stock: 32,
-    rating: 4.9,
-    badge: "پرفروش",
-    emoji: "🌈",
-    gradient: gradients[0],
-    glow: "#ff4ecd",
-    desc: "۱۲ طعم میوه‌ای با بسته‌بندی متالیک و کارت پیام رایگان برای هدیه‌های خوش‌رنگ.",
-  },
-  {
-    id: "p-sour-space",
-    name: "پک فضایی فوق ترش",
-    flavor: "ترش",
-    price: 189000,
-    oldPrice: 235000,
-    stock: 18,
-    rating: 4.8,
-    badge: "هیجان‌انگیز",
-    emoji: "🛸",
-    gradient: gradients[1],
-    glow: "#31f5c7",
-    desc: "پاستیل‌های ترش ستاره‌ای برای کسانی که طعم‌های انفجاری و متفاوت دوست دارند.",
-  },
-  {
-    id: "p-bear-deluxe",
-    name: "خرسی‌های مخملی آلمانی",
-    flavor: "لوکس",
-    price: 275000,
-    oldPrice: 315000,
-    stock: 25,
-    rating: 4.7,
-    badge: "وارداتی",
-    emoji: "🧸",
-    gradient: gradients[2],
-    glow: "#ffd166",
-    desc: "بافت نرم، رنگ‌های شفاف و طعم میوه‌ای متعادل برای یک تجربه لاکچری.",
-  },
-  {
-    id: "p-berry-cloud",
-    name: "ابرهای بری وانیلی",
-    flavor: "میوه‌ای",
-    price: 155000,
-    oldPrice: 0,
-    stock: 40,
-    rating: 4.6,
-    badge: "نرم",
-    emoji: "🫐",
-    gradient: gradients[3],
-    glow: "#06d6a0",
-    desc: "مارشمالو و پاستیل بری با رایحه وانیل، مناسب دورهمی‌های دوستانه.",
-  },
-  {
-    id: "p-fire-lemon",
-    name: "لیمو آتشی اکسترا",
-    flavor: "ترش",
-    price: 128000,
-    oldPrice: 159000,
-    stock: 12,
-    rating: 4.8,
-    badge: "تند و ترش",
-    emoji: "🍋",
-    gradient: gradients[4],
-    glow: "#f97316",
-    desc: "ترکیب لیمو ترش، کمی چیلی و روکش شکری برای عاشقان طعم‌های جسور.",
-  },
-  {
-    id: "p-love-gift",
-    name: "گیفت‌باکس قلبی پریمیوم",
-    flavor: "گیفت",
-    price: 498000,
-    oldPrice: 580000,
-    stock: 9,
-    rating: 5,
-    badge: "هدیه خاص",
-    emoji: "🎁",
-    gradient: gradients[5],
-    glow: "#60a5fa",
-    desc: "باکس قلبی با ۸ مدل پاستیل، روبان ساتن و پیام اختصاصی چاپ‌شده.",
-  },
-];
+const defaultProducts = [];
+
 
 const giftIdeas = [
   { emoji: "🎁", title: "باکس بنفش ترش", text: "پیشنهاد امروز برای دوست‌های هیجان‌طلب" },
@@ -221,6 +137,16 @@ function renderFilters() {
 
 function renderProducts() {
   const visibleProducts = getVisibleProducts();
+
+  if (!products.length) {
+    els.productGrid.innerHTML = `
+      <div class="empty-state">
+        <strong>فعلاً هیچ محصولی در فروشگاه نیست.</strong>
+        <p>ادمین می‌تواند از پنل مدیریت محصول جدید اضافه کند.</p>
+      </div>
+    `;
+    return;
+  }
 
   if (!visibleProducts.length) {
     els.productGrid.innerHTML = `
@@ -512,7 +438,10 @@ function addProductFromForm(form) {
 }
 
 function surpriseMe() {
-  if (!products.length) return;
+  if (!products.length) {
+    showToast("فعلاً محصولی برای پیشنهاد شانسی وجود ندارد.");
+    return;
+  }
   const candidates = getVisibleProducts().length ? getVisibleProducts() : products;
   const product = candidates[Math.floor(Math.random() * candidates.length)];
   addToCart(product.id);
